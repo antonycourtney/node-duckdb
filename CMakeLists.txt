@@ -3,12 +3,13 @@ cmake_policy(SET CMP0042 NEW)
 project(node-duckdb-addon)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-file(GLOB DUCKDBIN
-  "./duckdb/build/release/src/libduckdb.dylib"
-  "./duckdb/build/release/src/libduckdb.so"
-  "./duckdb/build/release/extension/parquet/libparquet_extension.a"
-  "./duckdb/build/release/extension/httpfs/libhttpfs_extension.a"
-)
+
+if(WIN32)
+  message("We are working on supporting Windows and we will get there soon.")
+else()
+  file(GLOB DUCKDBIN "./duckdb/build/release/src/libduckdb.dylib" "./duckdb/build/release/src/libduckdb.so" "./duckdb/build/release/extension/parquet/libparquet_extension.a" "./duckdb/build/release/extension/httpfs/libhttpfs_extension.a")
+endif()
+
 file(COPY ${DUCKDBIN}  DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release)
 include_directories(${CMAKE_JS_INC} ./duckdb/src/include ./duckdb/extension/parquet/include ./duckdb/extension/httpfs/include)
 link_directories(${CMAKE_CURRENT_BINARY_DIR}/Release)
@@ -26,14 +27,19 @@ if(UNIX AND NOT APPLE)
   message("Building for Linux")
   set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-Wl,-rpath,'$ORIGIN'")
 endif()
-
+if(WIN32)
+  message("Building for Windows")
+  set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-Wl")
+endif()
 # Include N-API wrappers
 execute_process(COMMAND node -p "require('node-addon-api').include"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         OUTPUT_VARIABLE NODE_ADDON_API_DIR
         )
-string(REPLACE "\n" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
-string(REPLACE "\"" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
+if(NOT WIN32)
+  string(REPLACE "\n" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
+  string(REPLACE "\"" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})  
+endif()
 target_include_directories(${PROJECT_NAME} PRIVATE ${NODE_ADDON_API_DIR})
 
 # define NPI_VERSION
