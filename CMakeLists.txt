@@ -5,20 +5,21 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if(WIN32)
-  message("We are working on supporting Windows and we will get there soon.")
+# Expecting duckdb to be downloaded at the parent directory
+  file(GLOB DUCKDBIN "../duckdb/build/src/release/duckdb.lib"  "../duckdb/build/extension/httpfs/release/httpfs_extension.lib")
 else()
   file(GLOB DUCKDBIN "./duckdb/build/release/src/libduckdb.dylib" "./duckdb/build/release/src/libduckdb.so" "./duckdb/build/release/extension/parquet/libparquet_extension.a" "./duckdb/build/release/extension/httpfs/libhttpfs_extension.a")
 endif()
 
 file(COPY ${DUCKDBIN}  DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release)
-include_directories(${CMAKE_JS_INC} ./duckdb/src/include ./duckdb/extension/parquet/include ./duckdb/extension/httpfs/include)
+include_directories(${CMAKE_JS_INC} ../duckdb/src/include ../duckdb/extension/parquet/include ../duckdb/extension/httpfs/include)
 link_directories(${CMAKE_CURRENT_BINARY_DIR}/Release)
 file(GLOB SOURCE_FILES "./addon/*")
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${CMAKE_JS_SRC})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
 find_package(OpenSSL REQUIRED)
 
-target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB} duckdb parquet_extension httpfs_extension ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY})
+target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB} duckdb httpfs_extension  ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY})
 if(APPLE)
   message("Building for MacOS")
   set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-Wl,-rpath,@loader_path/.")
@@ -29,17 +30,19 @@ if(UNIX AND NOT APPLE)
 endif()
 if(WIN32)
   message("Building for Windows")
-  set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-Wl")
+  set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
 endif()
 # Include N-API wrappers
 execute_process(COMMAND node -p "require('node-addon-api').include"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         OUTPUT_VARIABLE NODE_ADDON_API_DIR
         )
-if(NOT WIN32)
-  string(REPLACE "\n" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
-  string(REPLACE "\"" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})  
-endif()
+
+#This CMakeLists.txt is not expected to be called directly through CMake.
+#Doing so can throw parameter mismatch for string in the below two lines.
+string(REPLACE "\n" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
+string(REPLACE "\"" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})  
+
 target_include_directories(${PROJECT_NAME} PRIVATE ${NODE_ADDON_API_DIR})
 
 # define NPI_VERSION

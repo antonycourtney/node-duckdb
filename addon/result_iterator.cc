@@ -146,7 +146,7 @@ Napi::Value ResultIterator::getCellValue(Napi::Env env, duckdb::idx_t col_idx) {
 }
 
 Napi::Value ResultIterator::getMappedValue(Napi::Env env, duckdb::Value value) {
-  if (value.is_null) {
+  if (value.IsNull()) {
     return env.Null();
   }
 
@@ -166,12 +166,16 @@ Napi::Value ResultIterator::getMappedValue(Napi::Env env, duckdb::Value value) {
     // notation napi's BigInt is basically a regular signed integer (MSB) so we
     // want to make sure we pass the absolute value of the huge int into napi
     // plus the sign bit
+    // Vivek: This gives linker errors
+    /*
     auto huge_int = value.GetValue<duckdb::hugeint_t>();
     int is_negative = huge_int.upper < 0;
     duckdb::hugeint_t positive_huge_int =
         is_negative ? huge_int * duckdb::hugeint_t(-1) : huge_int;
     uint64_t arr[2]{positive_huge_int.lower, (uint64_t)positive_huge_int.upper};
     return Napi::BigInt::New(env, is_negative, 2, &arr[0]);
+    */
+    return Napi::BigInt::New(env, value.GetValue<int64_t>());
   }
   case duckdb::LogicalTypeId::FLOAT:
     return Napi::Number::New(env, value.GetValue<float>());
@@ -183,11 +187,11 @@ Napi::Value ResultIterator::getMappedValue(Napi::Env env, duckdb::Value value) {
   case duckdb::LogicalTypeId::VARCHAR:
     return Napi::String::New(env, value.GetValue<string>());
   case duckdb::LogicalTypeId::BLOB: {
-    int array_length = value.str_value.length();
-    char char_array[array_length + 1];
+    int array_length = value.GetValueUnsafe<string>().length();
+    // char char_array[array_length + 1];
     // TODO: multiple copies, improve
-    strcpy(char_array, value.str_value.c_str());
-    return Napi::Buffer<char>::Copy(env, char_array, array_length);
+    // strcpy(char_array, value.str_value.c_str());
+    return Napi::Buffer<char>::Copy(env, value.GetValueUnsafe<string>().c_str(), array_length);
   }
   case duckdb::LogicalTypeId::TIMESTAMP: {
     if (value.type().InternalType() != duckdb::PhysicalType::INT64) {
@@ -214,16 +218,27 @@ Napi::Value ResultIterator::getMappedValue(Napi::Env env, duckdb::Value value) {
     // GetValue is not supported for uint32_t, so using the wider type
     return Napi::Number::New(env, value.GetValue<int64_t>());
   case duckdb::LogicalTypeId::LIST: {
-    auto array = Napi::Array::New(env);
+    auto resultarray = Napi::Array::New(env);
+    /* Vivek
+    vector<Value>& children = ListValue::GetChildren(value);
+    size_t i = 0;
+    for (auto& entry : children) {
+      auto mapped_value = getMappedValue(env, entry);
+      resultarray.Set(i++, mapped_value);
+    }
+    */
+    /*
     for (size_t i = 0; i < value.list_value.size(); i++) {
       auto &element = value.list_value[i];
       auto mapped_value = getMappedValue(env, element);
       array.Set(i, mapped_value);
     }
-    return array;
+    */
+    return resultarray;
   }
   case duckdb::LogicalTypeId::STRUCT: {
     auto object = Napi::Object::New(env);
+    /* Vivek
     for (size_t i = 0; i < value.struct_value.size(); i++) {
       auto &child_types = duckdb::StructType::GetChildTypes(value.type());
       auto &key = child_types[i].first;
@@ -231,6 +246,7 @@ Napi::Value ResultIterator::getMappedValue(Napi::Env env, duckdb::Value value) {
       auto child_value = getMappedValue(env, element);
       object.Set(key, child_value);
     }
+    */
     return object;
   }
   default:
