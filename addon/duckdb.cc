@@ -63,7 +63,7 @@ DuckDB::DuckDB(const Napi::CallbackInfo &info)
   }
   try {
     database = duckdb::make_unique<duckdb::DuckDB>(path, &nativeConfig);
-    //database->LoadExtension<duckdb::ParquetExtension>();
+    database->LoadExtension<duckdb::ParquetExtension>();
     database->LoadExtension<duckdb::HTTPFsExtension>();
   } catch (duckdb::IOException e) {
     throw Napi::Error::New(env, e.what());
