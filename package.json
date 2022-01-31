@@ -23,7 +23,7 @@
     "Pieter Raubenheimer <pieter.raubenheimer@deepcrawl.com> (https://github.com/jupiter)",
     "Rostislav Provodenko <rostislav.provodenko@gmail.com> (https://github.com/rostislavdeepcrawl)"
   ],
-  "main": "dist/index.js",
+  "main": "dist/index.js",    
   "types": "dist/index.d.ts",
   "binary": {
     "napi_versions": [
@@ -33,8 +33,10 @@
   "scripts": {
     "audit:fix": "yarn-audit-fix",
     "build": "yarn build:duckdb && yarn build:addon && yarn build:ts",    
-	"build:addon": "rimraf build && cmake-js compile --CDnapi_build_version=6 --CDOPENSSL_ROOT_DIR=D:/Tools/vcpkg/buildtrees/openssl/x64-windows-rel",
+	"build:addon": "rimraf build && cmake-js compile --CDnapi_build_version=6",
     "build:duckdb": "cd duckdb && make BUILD_HTTPFS=1 && cd -",
+	"build:windows": "yarn build:duckdb:windows && yarn build:addon && yarn build:ts",
+    "build:duckdb:windows": "cd duckdb && rimraf build && mkdir build && cd build && cmake -Ax64 .. -DBUILD_HTTPFS_EXTENSION=1 -DBUILD_PARQUET_EXTENSION=1 -DCMAKE_INSTALL_PREFIX=./Release && cmake --build . --config=Release",
     "build:test:watch": "nodemon --exec 'yarn build && yarn jest --testTimeout=60000'",
     "build:ts": "rimraf dist && ttsc",
     "clang:check": "yarn clang-format --dry-run --Werror addon/**",

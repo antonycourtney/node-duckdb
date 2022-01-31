@@ -6,7 +6,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if(WIN32)
 # Expecting duckdb to be downloaded at the parent directory
-  file(GLOB DUCKDBIN "../duckdb/build/src/release/duckdb_static.lib"  "../duckdb/build/extension/httpfs/release/httpfs_extension.lib" "../duckdb/build/extension/parquet/release/parquet_extension.lib" "../duckdb/build/third_party/fmt/release/duckdb_fmt.lib" "../duckdb/build/third_party/libpg_query/release/duckdb_pg_query.lib"  "../duckdb/build/third_party/re2/release/duckdb_re2.lib" "../duckdb/build/third_party/miniz/Release/duckdb_miniz.lib" "../duckdb/build/third_party/utf8proc/Release/duckdb_utf8proc.lib" "../duckdb/build/third_party/hyperloglog/Release/duckdb_hyperloglog.lib" "../duckdb/build/third_party/fastpforlib/Release/duckdb_fastpforlib.lib")
+  file(GLOB DUCKDBIN "./duckdb/build/src/release/duckdb_static.lib"  "./duckdb/build/extension/httpfs/release/httpfs_extension.lib" "./duckdb/build/extension/parquet/release/parquet_extension.lib" "./duckdb/build/third_party/fmt/release/duckdb_fmt.lib" "./duckdb/build/third_party/libpg_query/release/duckdb_pg_query.lib"  "./duckdb/build/third_party/re2/release/duckdb_re2.lib" "./duckdb/build/third_party/miniz/Release/duckdb_miniz.lib" "./duckdb/build/third_party/utf8proc/Release/duckdb_utf8proc.lib" "./duckdb/build/third_party/hyperloglog/Release/duckdb_hyperloglog.lib" "./duckdb/build/third_party/fastpforlib/Release/duckdb_fastpforlib.lib")
 else()
   file(GLOB DUCKDBIN "./duckdb/build/release/src/libduckdb.dylib" "./duckdb/build/release/src/libduckdb.so" "./duckdb/build/release/extension/parquet/libparquet_extension.a" "./duckdb/build/release/extension/httpfs/libhttpfs_extension.a")
 endif()
