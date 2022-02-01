@@ -166,16 +166,13 @@ Napi::Value ResultIterator::getMappedValue(Napi::Env env, duckdb::Value value) {
     // notation napi's BigInt is basically a regular signed integer (MSB) so we
     // want to make sure we pass the absolute value of the huge int into napi
     // plus the sign bit
-    // Vivek: This gives linker errors
-    /*
+  
     auto huge_int = value.GetValue<duckdb::hugeint_t>();
     int is_negative = huge_int.upper < 0;
     duckdb::hugeint_t positive_huge_int =
         is_negative ? huge_int * duckdb::hugeint_t(-1) : huge_int;
     uint64_t arr[2]{positive_huge_int.lower, (uint64_t)positive_huge_int.upper};
     return Napi::BigInt::New(env, is_negative, 2, &arr[0]);
-    */
-    return Napi::BigInt::New(env, value.GetValue<int64_t>());
   }
   case duckdb::LogicalTypeId::FLOAT:
     return Napi::Number::New(env, value.GetValue<float>());
