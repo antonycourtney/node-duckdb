@@ -82,7 +82,6 @@
     "@zerollup/ts-transform-paths": "^1.7.18",
     "clang-format": "^1.6.0",
     "eslint": "^8.8.0",
-    "eslint-config-deepcrawl": "^5.10.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-array-func": "^3.1.7",
