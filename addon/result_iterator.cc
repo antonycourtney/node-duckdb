@@ -183,7 +183,7 @@ Napi::Value ResultIterator::getMappedValue(Napi::Env env, duckdb::Value value) {
   case duckdb::LogicalTypeId::VARCHAR:
     return Napi::String::New(env, value.GetValue<string>());
   case duckdb::LogicalTypeId::BLOB: {
-    return Napi::Buffer<char>::Copy(env, value.GetValue<string>().c_str(), value.GetValue<string>().length());
+    return Napi::Buffer<char>::Copy(env, value.GetValue<string>().c_str(), value.GetValue<string>().length() + 1);
   }
   case duckdb::LogicalTypeId::TIMESTAMP: {
     if (value.type().InternalType() != duckdb::PhysicalType::INT64) {
