@@ -1,6 +1,6 @@
 {
   "name": "ac-node-duckdb",
-  "version": "0.0.80",
+  "version": "0.0.81",
   "private": false,
   "description": "Fork of node-duckdb with Windows Support",
   "keywords": [
@@ -46,7 +46,7 @@
     "clang:fix": "yarn clang-format -i addon/**",
     "cleanup:binaries": "rimraf build prebuilds duckdb",
     "download-duckdb-custom": "rimraf duckdb && curl -L https://github.com/cwida/duckdb/archive/c07e229072595e086dc0adfac72638e8cc72de40.tar.gz > duckdb.tar.gz && mkdir duckdb && tar xf duckdb.tar.gz -C ./duckdb --strip-components=1 && rimraf duckdb.tar.gz",
-    "download-duckdb": "rimraf duckdb && curl -L https://github.com/duckdb/duckdb/tarball/v0.3.2 > duckdb.tar.gz && mkdir duckdb && tar xf duckdb.tar.gz -C ./duckdb --strip-components=1 && rimraf duckdb.tar.gz",
+    "download-duckdb": "rimraf duckdb && curl -L https://github.com/duckdb/duckdb/tarball/v0.3.3 > duckdb.tar.gz && mkdir duckdb && tar xf duckdb.tar.gz -C ./duckdb --strip-components=1 && rimraf duckdb.tar.gz",
     "eslint:check": "eslint --ext .js,.json,.ts ./",
     "eslint:fix": "eslint --fix --ext .js,.json,.ts ./",
     "generate-doc": "yarn build:ts && rimraf temp etc && mkdir etc && yarn api-extractor run --local --verbose &&  yarn api-documenter markdown -i temp -o docs/api && ./docs/replace.sh",
