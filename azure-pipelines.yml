@@ -26,3 +26,4 @@ jobs:
           }
       - script: yarn prebuild:upload
         displayName: "upload pre-compiled binary"
+        env: { GITHUB_TOKEN: $(GITHUB_TOKEN) }
