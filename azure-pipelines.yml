@@ -17,5 +17,6 @@ jobs:
         displayName: "Install openssl from homebrew"
       - script: yarn install --frozen-lockfile
         displayName: "yarn install"
+        env: { OPENSSL_ROOT_DIR: "/usr/local/openssl" }
       - script: yarn prebuild:upload
         displayName: "upload pre-compiled binary"
