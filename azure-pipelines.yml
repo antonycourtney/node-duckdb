@@ -2,6 +2,29 @@ trigger:
   - master
 
 jobs:
+  - job: windows_latest
+    timeoutInMinutes: 90
+    pool:
+      vmImage: windows-latest
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: 16.x
+        displayName: "Use node.js 16"
+      - script: npm install -g yarn
+        displayName: "Install yarn"
+      - script: curl -L https://mirror.firedaemon.com/OpenSSL/openssl-1.1.1m.zip > openssl-1.1.1m.zip
+        displayName: "download OpenSSL"
+      - script: mkdir ./openssl-1.1.1m
+        displayName "make openssl dir"
+      - script: tar -xf openssl-1.1.1m.zip -C ./openssl-1.1.1m --strip-components=1
+        displayName: "extract openssl"
+      - script: yarn install --frozen-lockfile
+        displayName: "yarn install"
+        env: { OPENSSL_ROOT_DIR: $(System.DefaultWorkingDirectory)/openssl-1.1.1m4/x64 }
+      - script: yarn prebuild:upload
+        displayName: "upload pre-compiled binary"
+        env: { GITHUB_TOKEN: $(GITHUB_TOKEN) }
   - job: ubuntu_latest
     timeoutInMinutes: 90
     pool:
