@@ -13,7 +13,7 @@ jobs:
         displayName: "Use node.js 16"
       - script: npm install -g yarn
         displayName: "Install yarn"
-      - script: curl.exe -o openssl-1.1.1o https://mirror.firedaemon.com/OpenSSL/openssl-1.1.1o.zip
+      - script: curl.exe -o openssl-1.1.1o.zip https://mirror.firedaemon.com/OpenSSL/openssl-1.1.1o.zip
         displayName: "download OpenSSL"
       - script: mkdir .\openssl-1.1.1o
         displayName: "make openssl dir"
