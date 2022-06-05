@@ -16,7 +16,7 @@ jobs:
       - script: curl -L https://mirror.firedaemon.com/OpenSSL/openssl-1.1.1m.zip > openssl-1.1.1m.zip
         displayName: "download OpenSSL"
       - script: mkdir ./openssl-1.1.1m
-        displayName "make openssl dir"
+        displayName: "make openssl dir"
       - script: tar -xf openssl-1.1.1m.zip -C ./openssl-1.1.1m --strip-components=1
         displayName: "extract openssl"
       - script: yarn install --frozen-lockfile
